@@ -1,4 +1,5 @@
 mod sorting;
+
 use sorting::{bogo_sort, bubble_sort_no_flag, bubble_sort_with_flag, quick_sort, selection_sort};
 use colored::Colorize;
 
@@ -84,7 +85,7 @@ fn main()
     }
 }
 
-fn int_input() -> i64 
+fn int_input() -> i64
 {
     let mut line = String::new();
     match std::io::stdin().read_line(&mut line)
@@ -117,5 +118,5 @@ fn input() -> String
 fn print_result(sorted_vec: Vec<i64>, iterations: u64)
 {
     println!("{} {:?}", "sorted:".green(), sorted_vec);
-    println!("finished after {} iterations.", format!("{:?}", iterations).blue());
+    println!("Sorting finished after {} iterations.", format!("{:?}", iterations).blue());
 }
