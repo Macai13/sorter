@@ -1,12 +1,12 @@
 mod sorting;
-use sorting::{bubble_sort_no_flag, bubble_sort_with_flag, quick_sort, selection_sort};
+use sorting::{bogo_sort, bubble_sort_no_flag, bubble_sort_with_flag, quick_sort, selection_sort};
 use colored::Colorize;
 
 fn main()
 {
     loop 
     {
-        print!("{esc}[2J{esc}[1;1H", esc = 27 as char); // clear terminal
+        print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
 
         let mut vec: Vec<i64> = vec![];
 
@@ -25,6 +25,7 @@ fn main()
         println!("{}", "2. Optimized bubble sort".purple());
         println!("{}", "3. Quick sort".purple());
         println!("{}", "4. Selection sort".purple());
+        println!("{}", "5. Bogo sort".purple());
         println!("{}", "0. Exit".red());
 
         let choice = int_input();
@@ -50,7 +51,7 @@ fn main()
             3 => 
             {
                 let vec_size = vec.len();
-                let iterations = quick_sort::sort(&mut vec, 0, vec_size - 1);
+                let iterations = quick_sort::sort(&mut vec, 0, (vec_size - 1) as isize);
 
                 print_result(vec, iterations);
             },
@@ -62,7 +63,14 @@ fn main()
                 print_result(vec, iterations);
             },
 
-            0 => 
+            5 =>
+            {
+                let iterations: u64 = bogo_sort::sort(&mut vec);
+
+                print_result(vec, iterations);
+            },
+
+            0 =>
             {
                 println!("Program end.");
                 std::process::exit(0);
@@ -71,7 +79,7 @@ fn main()
             _ => continue,
         }
 
-        println!("\nPress any key to go again...");
+        println!("\nPress enter to go again...");
         input();
     }
 }

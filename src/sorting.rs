@@ -66,47 +66,33 @@ pub mod quick_sort
 {
     static mut ITERATIONS: u64 = 0;
 
-    fn partition(vector: &mut Vec<i64>, low: usize, high: usize) -> usize
+    fn partition(vector: &mut Vec<i64>, low: isize, high: isize) -> isize
     {
-        let pivot = vector[high];
-        let mut index;
-        let low_i: isize = low.try_into().unwrap();
-        let mut iter0 = false;
+        let pivot = vector[high as usize];
+        let mut index: isize;
 
-        if low_i - 1 < 0
-        {
-            index = 0;
-            iter0 = true;
-        }
-        
-        else 
-        {
-            index = low - 1;
-        }
+        index = low as isize - 1;
 
-        for j in low..high
+
+        for j in low..=high - 1
         {
-            if vector[j] < pivot
+            if vector[j as usize] <= pivot
             {
-                if !iter0 
-                {
-                    index += 1;
-                }
-
-                let temp = vector[index];
-                vector[index] = vector[j];
-                vector[j] = temp;
+                index += 1;
+                let temp = vector[index as usize];
+                vector[index as usize] = vector[j as usize];
+                vector[j as usize] = temp;
             }
         }
 
-        let temp = vector[index + 1];
-        vector[index + 1] = vector[high];
-        vector[high] = temp;
+        let temp = vector[(index + 1) as usize];
+        vector[(index + 1) as usize] = vector[high as usize];
+        vector[high as usize] = temp;
 
         index + 1
     }
 
-    pub fn sort(vector: &mut Vec<i64>, low: usize, high: usize) -> u64
+    pub fn sort(vector: &mut Vec<i64>, low: isize, high: isize) -> u64
     {
         if low < high
         {
@@ -154,6 +140,51 @@ pub mod selection_sort
             vector[min_ind] = temp;
         }
 
-        return iterations;
+        iterations
+    }
+}
+
+pub mod bogo_sort
+{
+    use rand::prelude::*;
+    use super::quick_sort;
+
+    pub fn sort(vector: &mut Vec<i64>) -> u64
+    {
+        let mut iterations: u64 = 0;
+        let mut vector_clone_compare: Vec<i64> = vector.clone();
+        let vec_size = vector.len();
+        let mut rng = rand::thread_rng();
+        let mut rand_index1;
+        let mut rand_index2;
+
+        quick_sort::sort(&mut vector_clone_compare, 0, (vec_size - 1) as isize);
+
+        while !compare_eq(vector.clone(), vector_clone_compare.clone())
+        {
+            rand_index1 = rng.gen_range(0..vec_size);
+            rand_index2 = rng.gen_range(0..vec_size);
+
+            let temp = vector[rand_index1];
+            vector[rand_index1] = vector[rand_index2];
+            vector[rand_index2] = temp;
+
+            iterations += 1;
+        }
+
+        iterations
+    }
+
+    fn compare_eq(vec1: Vec<i64>, vec2: Vec<i64>) -> bool
+    {
+        for i in 0..vec1.len()
+        {
+            if vec1[i] != vec2[i]
+            {
+                return false;
+            }
+        }
+
+        true
     }
 }
