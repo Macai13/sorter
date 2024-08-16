@@ -127,3 +127,33 @@ pub mod quick_sort
         }
     }
 }
+
+pub mod selection_sort
+{
+    pub fn sort(vector: &mut Vec<i64>) -> u64
+    {
+        let mut min_ind: usize;
+        let mut iterations: u64 = 0;
+
+        for i in 0..vector.len()
+        {
+            min_ind = i;
+
+            for j in (i + 1)..vector.len()
+            {
+                if vector[j] < vector[min_ind]
+                {
+                    min_ind = j;
+                }
+
+                iterations += 1;
+            }
+
+            let temp = vector[i];
+            vector[i] = vector[min_ind];
+            vector[min_ind] = temp;
+        }
+
+        return iterations;
+    }
+}
