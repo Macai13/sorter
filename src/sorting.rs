@@ -1,36 +1,34 @@
 pub mod bubble_sort_no_flag
 {
-    pub fn sort(vector: Vec<i64>) -> (Vec<i64>, u64)
+    pub fn sort(vector: &mut Vec<i64>) -> u64
     {
         let vector_len = vector.len();
-        let mut sorted_vec: Vec<i64> = vector;
         let mut iterations: u64 = 0;
 
         for _ in 0..vector_len
         {
             for j in 0..(vector_len - 1)
             {
-                if sorted_vec[j] > sorted_vec[j + 1]
+                if vector[j] > vector[j + 1]
                 {
-                    let temp = sorted_vec[j + 1];
-                    sorted_vec[j + 1] = sorted_vec[j];
-                    sorted_vec[j] = temp;                    
+                    let temp = vector[j + 1];
+                    vector[j + 1] = vector[j];
+                    vector[j] = temp;                    
                 }
 
                 iterations += 1;
             }
         }
 
-        (sorted_vec, iterations)
+        iterations
     }
 }
 
 pub mod bubble_sort_with_flag
 {
-    pub fn sort(vector: Vec<i64>) -> (Vec<i64>, u64)
+    pub fn sort(vector: &mut Vec<i64>) -> u64
     {
         let vector_len = vector.len();
-        let mut sorted_vec: Vec<i64> = vector;
         let mut changed: bool;
         let mut iterations: u64 = 0;
 
@@ -40,11 +38,11 @@ pub mod bubble_sort_with_flag
 
             for j in 0..(vector_len - 1)
             {
-                if sorted_vec[j] > sorted_vec[j + 1]
+                if vector[j] > vector[j + 1]
                 {
-                    let temp = sorted_vec[j + 1];
-                    sorted_vec[j + 1] = sorted_vec[j];
-                    sorted_vec[j] = temp;
+                    let temp = vector[j + 1];
+                    vector[j + 1] = vector[j];
+                    vector[j] = temp;
 
                     changed = true;
                 }
@@ -58,7 +56,7 @@ pub mod bubble_sort_with_flag
             }
         }
 
-        (sorted_vec, iterations)
+        iterations
     }
 }
 
@@ -186,5 +184,71 @@ pub mod bogo_sort
         }
 
         true
+    }
+}
+
+pub mod radix_sort
+{
+    static mut ITERATIONS: u64 = 0;
+
+    pub fn sort(vector: &mut Vec<i64>) -> u64
+    {
+        let max = get_max(vector.to_vec());
+        let mut exp: usize = 1;
+
+        while max / exp as i64 > 0
+        {
+            count_sort(vector, exp);
+
+            exp = exp * 10;
+        }
+
+        unsafe 
+        {
+            ITERATIONS
+        }
+    }
+
+    fn count_sort(vector: &mut Vec<i64>, exp: usize) -> ()
+    {
+        let limit = vector.len();
+        let mut temp_vector: Vec<i64> = vec![0; limit];
+        let mut count_vector: Vec<usize> = vec![0; limit];
+        let mut iter_vec: Vec<i64> = vec![0; 3];
+
+        for i in 0..vector.len()
+        {
+            iter_vec[0] = iter_vec[0] + 1;
+            count_vector[((vector[i] / exp as i64) % 10) as usize] = count_vector[((vector[i] / exp as i64) % 10) as usize] + 1;
+        }
+
+        for i in 1..limit
+        {
+            iter_vec[1] = iter_vec[1] + 1;
+            count_vector[i] = count_vector[i] + count_vector[i - 1];
+        }
+
+        for i in (0..=(vector.len() - 1)).rev()
+        {
+            iter_vec[2] = iter_vec[2] + 1;
+            let ind = ((vector[i] / exp as i64) % 10) as usize;
+            temp_vector[count_vector[ind] - 1] = vector[i];
+            count_vector[ind] = count_vector[ind] - 1;  
+        }
+
+        for i in 0..limit
+        {
+            vector[i] = temp_vector[i];
+        }
+
+        unsafe 
+        {
+            ITERATIONS = ITERATIONS + get_max(iter_vec) as u64;
+        }
+    }
+
+    fn get_max(vector: Vec<i64>) -> i64
+    {
+        *vector.iter().max().unwrap()
     }
 }
